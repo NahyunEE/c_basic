@@ -1,0 +1,70 @@
+[문제 1] 배열 원소의 값을 오름차순 또는 내림차순으로 정렬하기 위한 프로그램을 작성하세요.
+
+아래에 선언된 함수를 정의합니다.
+
+#include <stdio.h>
+
+// 정수 포인터 두 개를 전달 받아 두 값을 교환하는 함수
+void intSwap(int *x, int *y);
+
+// 정수 배열과 배열 원소의 수를 전달받아 배열 원소의 값을 출력하는 함수
+void intPrinter(int *arr, int count);
+
+// 두 정수 값을 비교하고 값의 차이를 반환하는 함수
+int intCompareAsc(int *x, int *y);
+
+// 두 정수 값을 비교하고 값의 차이를 반환하는 함수
+int intCompareDesc(int *x, int *y);
+
+// 정수 배열과 배열 원소의 수, 비교함수를 전달 받아 첫 번째 인수로 전달받은 배열 원소를 정렬합니다.
+// 정렬에 사용할 알고리즘은 제한하지 않습니다. 삽입, 버블, 선택정렬 중 하나를 사용합니다.
+void intSort(int* arr, int count, int (*compareFunc)(int*, int*));
+
+int main() {
+	int intAry[] = { 6, 3, 5, 7, 8, 2, 1, 9, 10, 4 };
+	int count = (int)(sizeof(intAry) / sizeof(intAry[0]));
+	print(intAry, count);
+	intSort(intAry, count, intCompareAsc);
+	print(intAry, count);
+	intSort(intAry, count, intCompareDesc);
+	print(intAry, count);
+	return 0;
+}
+
+실행결과>
+6 3 5 7 8 2 1 9 10 4
+1 2 3 4 5 6 7 8 9 10
+10 9 8 7 6 5 4 3 2 1
+
+
+[문제 2] 문제 1의 코드를 바탕으로 double형 배열을 정렬하기 위한 함수들을 선언하고 정의하세요.
+
+#include <stdio.h>
+
+// double 포인터 두 개를 전달 받아 두 값을 교환하는 함수
+// 함수명 : doublePrinter
+
+// double 배열과 배열 원소의 수를 전달받아 배열 원소의 값을 출력하는 함수
+// 함수명 : doublePrinter
+
+// 두 double 값을 비교하고 값의 차이를 반환하는 함수 (오름 차순 정렬시 사용)
+// 함수명 : doubleCompareAsc
+
+// 두 double 값을 비교하고 값의 차이를 반환하는 함수 (내림 차순 정렬시 사용)
+// 함수명 : doubleCompareDesc
+
+// double 배열과 배열 원소의 수, 비교함수를 전달 받아 첫 번째 인수로 전달받은 배열 원소를 정렬합니다.
+// 함수명 : doubleSort
+
+int main() {
+	double doubleAry[] = { 2.4, 3.6, 5.3, 5.5, 2.7, 3.8, 1.2, 1.9, 9.4, 4.2 };
+	int count = (int)(sizeof(doubleAry) / sizeof(doubleAry[0]));
+	doublePrinter(doubleAry, count);
+	doubleSort(doubleAry, count, doubleCompareAsc);
+	doublePrinter(doubleAry, count);
+	doubleSort(doubleAry, count, doubleCompareDesc);
+	doublePrinter(doubleAry, count);
+	
+	
+	return 0;
+}

@@ -1,0 +1,289 @@
+[문제] 아래의 코드에 선언된 함수를 정의하세요.
+
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+// 회원 정보 관리 구조체 자료형의 선언
+typedef struct {
+	// 회원 이름
+	char name[20];
+	// 회원 연령
+	int age;
+} person_t;
+
+// 회원 관리 구조체 자료형의 선언
+typedef struct {
+	// person_t 구조체 배열
+	person_t** persons;
+	// 등록 인원 수
+	int count;
+	// 등록 가능 인원 수
+	int size;
+	// 증분치
+	int increase;
+} manager_t;
+
+/*
+함수명		: initManager
+파라미터
+manager		: 회원 관리 구조체 포인터
+initsize	: 등록 가능 회원 수
+increase	: 증분치
+반환값 없음
+설명
+  첫 번째 인수로 전달 받은 회원 관리 구조체 멤버를 초기화 한다.
+  최초 회원 등록 가능한 배열의 크기는 initSize 이다.
+  persons 멤버는 initSize 크기의 person_t* 타입을 원소로 하는 포인터 배열이다.
+*/
+int initManager(manager_t* manager, int initSize, int increase);
+
+/*
+함수명		: printMenu
+파라미터
+menu		: 메뉴 저장 배열
+menuCount	: 메뉴 수
+반환값 없음
+설명
+  첫 번째 인자로 전달 받은 메뉴를 출력한다.
+*/
+void printMenu(const char* menu[], int count);
+
+/*
+함수명		: desctroyManager
+파라미터
+manager		: 회원 관리 구조체 포인터
+반환값 없음
+설명
+  인자로 전달받은 회원관리 구조체에 사용된 동적할당 영역을 소멸하고 모든 멤버의 값을 0으로 초기화 한다.
+*/
+void destroyManager(manager_t* manager);
+
+/*
+함수명		: getString
+파라미터
+message		: 출력 메시지
+buffer		: 입력 문자열 저장 배열
+반환값
+  성공시		: 0
+  실패시		: 1
+설명
+  첫 번째 인수를 출력한 후 콘솔로부터 문자열을 읽어 들여 두 번째 인수에 저장한다.
+*/
+int getString(const char* message, char *buffer);
+
+/*
+함수명		: getInteger
+파라미터
+message		: 출력 메시지
+반환값
+  성공시		: 1
+  실패시		: 0
+설명
+  첫 번째 인수를 출력한 후 콘솔로부터 정수를 입력받아 두 번째 파라미터의 포인터가 참조하는 변수에 저장한다.
+*/
+int getInteger(const char* message, int* intPtr);
+
+/*
+함수명		: makePerson
+파라미터
+name	: 회원이름
+age		: 회원연령
+반환값
+  성공시		: 생성된 구조체 주소
+  실패시		: NULL
+설명
+  person_t 구조체 메모리 공간을 동적할당 받고 파라미터 값을 사용하여 초기화 한 후
+동적할당된 메모리 주소를 반환한다.
+*/
+person_t* makePerson(const char* name, int age);
+
+/*
+함수명		: is_full
+파라미터
+manager		: 회원 관리 구조체 포인터
+반환값
+멤버 저장공간이 가득 찼을 경우 : 1
+멤버 저장공간이 가득 차지 않았을 경우 : 0
+설명
+  회원 관리 구조체의 persons 멤버가 가득 찼는가를 반환한다.
+*/
+int is_full(manager_t* manager);
+
+/*
+함수명		: is_empty
+파라미터
+manager		: 회원 관리 구조체 포인터
+반환값
+멤버 저장공간이 비어있을 경우 : 1
+멤버 저장공간이 비어있지 않을 경우 : 0
+설명
+  회원 관리 구조체의 persons 멤버가 비어 있는가 반환한다.
+*/
+int is_empty(manager_t* manager);
+
+/*
+함수명		: resize
+파라미터
+manager		: 회원 관리 구조체 포인터
+반환값
+  성공시		: 1
+  실패시		: 0
+설명
+  회원 관리 구조체의 persons 멤버의 공간을 증분한다. 
+  멤버 공간의 증분은 increase 멤버의 값 만큼 증분한다.
+*/
+int resize(manager_t* manager);
+
+
+/*
+함수명		: inputPerson
+파라미터
+manager		: 회원 관리 구조체 포인터
+반환값 없음
+설명
+  콘솔로부터 회원이름과 연령을 입력받고 회원 정보 구조체를 생성(동적할당)하여 관리 객체의 배열에 저장한다.
+*/
+void inputPerson(manager_t* manager);
+
+
+/*
+함수명		: searchPerson
+파라미터
+manager		: 회원 관리 구조체 포인터
+반환값
+검색 성공시	: 해당 회원 구조체의 주소
+검색 실패시	: NULL
+설명
+  인자로 전달받은 회원 관리객체에 등록된 회원 정보를 검색한다.
+  회원 정보 검색은 이름 검색과 연령 검색이 있다.
+  검색은 이름 검색 함수 또는 연령 검색 함수를 사용하여 검색하며
+  해당 함수에서는 이름검색 또는 연령검색을 선택하고 검색된 회원 정보를 출력하고
+  반환한다.
+*/
+person_t* searchPerson(manager_t* manager);
+
+
+/*
+함수명		: searchName
+파라미터
+manager		: 회원 관리 객체(구조체 변수)
+검색 성공시	: 해당 회원 구조체의 주소
+검색 실패시	: NULL
+설명
+  인자로 전달받은 회원 관리객체에 등록된 회원 정보를 이름으로 검색하여 반환한다.
+*/
+person_t* searchName(manager_t* manager);
+
+
+/*
+함수명		: searchAge
+파라미터
+manager		: 회원 관리 객체(구조체 변수)
+검색 성공시	: 해당 회원 구조체의 주소
+검색 실패시	: NULL
+설명
+  인자로 전달받은 회원 관리객체에 등록된 회원 정보를 연령으로 검색하여 반환한다.
+*/
+person_t* searchAge(manager_t* manager);
+
+/*
+함수명		: removePerson
+파라미터
+manager		: 회원 관리 객체(구조체 변수)
+반환값 없음
+설명
+  인자로 전달받은 회원 관리객체에 등록된 회원 정보를 삭제한다.
+  회원 정보의 삭제는 회원 검색을 통해 얻어진 회원을 대상으로 삭제를 수행한다.
+*/
+void removePerson(manager_t* manager);
+
+/*
+함수명		: printPerson
+파라미터
+manager		: 회원 구조체 포인터
+반환값 없음
+설명
+  인자로 전달받은 회원 구조체 멤버값을 출력한다.
+*/
+void printPerson(person_t* person);
+
+/*
+함수명		: printAll
+파라미터
+manager		: 회원 관리 객체(구조체 변수)
+반환값 없음
+설명
+  인자로 전달받은 회원 관리객체에 등록된 모든 회원 목록을 출력한다.
+  해당 함수에서는 모든 회원에 대한 루프만 수행하며 
+  회원정보의 출력은 printPerson 함수를 사용하여 출력한다.
+*/
+void printAll(manager_t* manager);
+
+/*
+함수명		: ageCompare
+파라미터
+  p1		: 비교 연령을 참조하는 포인터
+  p2		: 비교 연령을 참조하는 포인터
+반환값
+  두 회원의 연령 값의 차이
+설명
+  인자로 전달 받은 두 회원 정보 중 연령의 차이 값을 반환한다.
+*/
+int ageCompare(void* p1, void* p2);
+
+/*
+함수명		: nameCompare
+파라미터
+  p1		: 비교할 문자열
+  p2		: 비교할 문자열
+반환값
+  두 회원의 이름 값의 차이
+설명
+  인자로 전달 받은 두 문자열을 비교한다.
+*/
+int nameCompare(void* p1, void* p2);
+
+int main() {
+	manager_t manager = { NULL, 0, 0 };
+	if (initManager(&manager, 2) == 0) {
+		fprintf(stderr, "프로그램을 종료합니다.\n");
+		return 1;
+	}
+	const char *menu[] = { "1. 입력하기", "2. 출력하기", "3. 검색하기", "4. 삭제하기", "5. 종료하기" };
+	int menuCount = (int)(sizeof(menu) / sizeof(menu[0]));
+	int menuNum = 0;
+
+	do {
+		printMenu(menu, menuCount);
+		if (getInteger("메뉴번호 입력", &menuNum) == 0) {
+			continue;
+		}
+		if ((menuNum < 1) || (menuNum > menuCount)) {
+			printf("잘못 입력하였습니다.\n");
+			continue;
+		}
+
+		switch (menuNum) {
+		case 1:
+			inputPerson(&manager);
+			break;
+		case 2:
+			printAll(&manager);
+			break;
+		case 3:
+			searchPerson(&manager);
+			break;
+		case 4:
+			removePerson(&manager);
+			break;
+		default:
+			;
+			break;
+		}
+	} while (menuNum != menuCount);
+
+	destroyManager(&manager);
+	printf("프로그램을 종료합니다!!!\n");
+	return 0;
+}

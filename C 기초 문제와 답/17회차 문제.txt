@@ -1,0 +1,46 @@
+[문제] 전처리 연산자 ##을 사용하여 자료형에 관계 없이 사용 가능한 프로그램을 작성해 보세요.
+
+	
+
+#include <stdio.h>
+
+// 자료형에 관계 없이 동일한 방법으로 정렬 함수를 호출하기 위한 매크로 함수의 정의가 필요합니다.
+// TODO
+// 자료형에 관계 없이 동일한 방법으로 출력 함수를 호출하기 위한 매크로 함수의 정의가 필요합니다.
+// TODO
+
+// 두 정수의 값을 교환하기 위한 함수입니다. 함수를 정의합니다.
+void intSwap(int* p1, int* p2);
+
+// 두 실수의 값을 교환하기 위한 함수입니다. 함수를 정의합니다.
+void doubleSwap(double* p1, double* p2);
+
+// 정수 배열을 출력하기 위한 함수입니다. 함수를 정의합니다.
+void intPrint(int* arr, int count);
+
+// 실수 배열을 출력하기 위한 함수입니다. 함수를 정의합니다.
+void doublePrint(double* arr, int count);
+
+// 정수 배열을 정렬하기 위한 함수입니다. 함수를 정의합니다.
+void intSort(int* arr, int count, void(*swap)(int*, int*));
+
+// 정수 배열을 정렬하기 위한 함수입니다. 함수를 정의합니다.
+void doubleSort(int* arr, int count, void(*swap)(double*, double*));
+
+// main() 함수
+int main() {
+	int intArray[] = { 3, 5, 1, 2, 4 };
+	int intCount = (int)(sizeof(intArray) / sizeof(intArray[0]));
+
+	print(int, intArray, intCount);
+	sort(int, intArray, intCount);
+	print(int, intArray, intCount);
+
+	double doubleArray[] = { 3.2, 2.5, 8.7, 5.4, 4.8 };
+	int doubleCount = (int)(sizeof(doubleArray) / sizeof(doubleArray[0]));
+	print(double, doubleArray, doubleCount);
+	sort(double, doubleArray, doubleCount);
+	print(double, doubleArray, doubleCount);
+
+	return 0;
+}
