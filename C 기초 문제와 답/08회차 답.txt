@@ -1,0 +1,103 @@
+[문제 1] 
+
+#include <stdio.h>
+
+void intSwap(int *x, int *y) {
+	int tmp = *x;
+	*x = *y;
+	*y = tmp;
+}
+
+void intPrinter(int *arr, int count) {
+	for (int i=0 ; i<count ; i++) {
+		printf("%d ", arr[i]);
+	}
+	printf("\n");
+}
+
+int intCompareAsc(int *x, int *y) {
+	return *x - *y;
+}
+
+int intCompareDesc(int *x, int *y) {
+	return *y - *x;
+}
+
+void intSort(int* arr, int count, int (*compareFunc)(int*, int*)) {
+	for (int i=0 ; i<(count-1) ; i++) {
+		int min = i;
+		for (int j=(i+1) ; j<count ; j++) {
+			if (compareFunc(arr + min, arr + j) > 0) {
+				min = j;
+			}
+		}
+		intSwap(arr + i, arr + min);
+	}
+}
+
+int main() {
+	int intAry[] = { 6, 3, 5, 7, 8, 2, 1, 9, 10, 4 };
+	int intCount = (int)(sizeof(intAry) / sizeof(intAry[0]));
+	intPrinter(intAry, intCount);
+	intSort(intAry, intCount, intCompareAsc);
+	intPrinter(intAry, intCount);
+	intSort(intAry, intCount, intCompareDesc);
+	intPrinter(intAry, intCount);
+	
+	
+	return 0;
+}
+
+
+[문제 2]
+
+#include <stdio.h>
+
+void doubleSwap(double *x, double *y) {
+	double tmp = *x;
+	*x = *y;
+	*y = tmp;
+}
+
+void doublePrinter(double *arr, int count) {
+	for (int i=0 ; i<count ; i++) {
+		printf("%5.2lf ", arr[i]);
+	}
+	printf("\n");
+}
+
+int doubleCompareAsc(double *x, double *y) {
+	if (*x == *y) return 0;
+	else if (*x > *y) return 1;
+	return -1;
+}
+
+int doubleCompareDesc(double *x, double *y) {
+	if (*x == *y) return 0;
+	else if (*x > *y) return -1;
+	return 1;
+}
+
+void doubleSort(double* arr, int count, int (*compareFunc)(double*, double*)) {
+	for (int i=0 ; i<(count-1) ; i++) {
+		int min = i;
+		for (int j=(i+1) ; j<count ; j++) {
+			if (compareFunc(arr + min, arr + j) > 0) {
+				min = j;
+			}
+		}
+		doubleSwap(arr + i, arr + min);
+	}
+}
+
+int main() {
+	double doubleAry[] = { 2.4, 3.6, 5.3, 5.5, 2.7, 3.8, 1.2, 1.9, 9.4, 4.2 };
+	int count = (int)(sizeof(doubleAry) / sizeof(doubleAry[0]));
+	doublePrinter(doubleAry, count);
+	doubleSort(doubleAry, count, doubleCompareAsc);
+	doublePrinter(doubleAry, count);
+	doubleSort(doubleAry, count, doubleCompareDesc);
+	doublePrinter(doubleAry, count);
+		
+	return 0;
+}

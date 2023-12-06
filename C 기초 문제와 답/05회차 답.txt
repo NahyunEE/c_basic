@@ -1,0 +1,297 @@
+[문제 1] 전달 받은 값이 소수인 경우 1을, 소수가 아닌 경우 0을 출력하는 함수를 작성하세요.
+
+#include <stdio.h>
+
+// 전달 받은 값이 소수인 경우 1을, 소수가 아닌 경우 0을 반환하는 함수를 선언합니다.
+int isPrime(int n);
+
+int main() {
+
+    int num = 0;
+    printf("2 이상의 양의 정수 입력 : ");
+
+    if (scanf("%d", &num) == 1) {
+        // 여기에서 소수를 체크하는 함수를 호출하고 결과에 따라 처리를 합니다.
+	int result = isPrime(num);
+
+	// 입력 받은 값이 소수 이면 "소수 입니다"를 출력
+	if (result == 1) {	
+		printf("%d는 소수입니다.\n", num);
+	}
+	// 소수가 아니라면 "소수가 아닙니다"를 출력
+	else {        
+		printf("%d는 소수가 아닙니다.\n", num);
+	}
+    } else {
+        printf("잘못 입력하였습니다.\n");
+    }
+
+    printf("프로그램을 종료합니다.\n");
+    return 0;
+}
+
+// 여기에 전달 받은 값이 소수인 경우 1을, 소수가 아닌 경우 0을 반환하는 함수를 선언합니다.
+int isPrime(int n) {
+	int retval = 1;
+	if (n <= 2) return retval;
+	
+	for (int i=2 ; i<n ; i++) {
+		if ((n % 2) == 0) {
+			retval = 0;
+			break;
+		}
+	}
+	
+	return retval;
+} 
+
+
+
+[문제 2] 점수를 받아 학점으로 변환하여 출력하는 프로그램을 작성하세요
+
+#include <stdio.h>
+
+// 점수(정수 값)를 받아 학점으로 변환하여 반환하는 함수를 선언합니다.
+// 점수에 따른 학점은 다음과 같습니다. 
+//
+//  60점 미만 	: 'F'
+//  60 ~ 69 	: 'D'
+//  70 ~ 79	: 'C'
+//  80 ~ 89 	: 'B'
+//  90 ~ 100	: 'A'
+char converter(int n);
+
+int main() {
+
+    int jumsu = 0;
+    printf("점수 입력 : ");
+
+    if (scanf("%d", &jumsu) == 1) {
+        // 여기에서 점수를 학점으로 변환하는 함수를 호출합니다.
+	char grade = converter(jumsu);
+        // 점수와 학점을 출력합니다.
+	printf("점수 : %d, 학점 : %c\n", jumsu, grade);
+    } else {
+        printf("잘못 입력하였습니다.\n");
+    }
+
+    printf("프로그램을 종료합니다.\n");
+    return 0;
+}
+
+// 정수 값을 하나 전달받아 학점으로 변환하여 반환하는 함수를 정의합니다.
+char converter(int n) {
+	char retval = 'F';
+	switch (n / 10) {
+		case 10:
+		case 9:
+			retval = 'A';
+			break;
+		case 8:
+			retval = 'B';
+			break;
+		case 7:
+			retval = 'C';
+			break;
+		case 6:
+			retval = 'D';
+			break;
+		default:
+			;
+			break;
+	}
+	
+	return retval;
+}
+
+
+[문제 3] 2의 N승 값을 구하는 프로그램을 작성하세요.
+
+
+#include <stdio.h>
+
+// 여기에 정수 값(N) 하나를 전달받아 2의 N승 값을 반환하는 함수를 선언합니다.
+int powerOf2(int n);
+
+int main() {
+    int n = 0;
+    printf("입력 : ");
+
+    if (scanf("%d", &n) == 1) {
+	// 여기에서 2의 N승값을 구하는 함수를 호출하고 결과를 출력합니다.
+	int pow = powerOf2(n);
+	printf("2의 %d승 값 : %d\n", n, pow);
+    } else {
+        printf("잘못 입력하였습니다.\n");
+    }
+
+    printf("프로그램을 종료합니다.\n");
+    return 0;
+}
+
+// 여기에 정수 값(N) 하나를 전달받아 2의 N승 값을 반환하는 함수를 정의합니다.
+int powerOf2(int n) {
+	int retval = 1;
+	for (int i=0 ; i<n ; i++) {
+		retval *= 2;
+	}	
+	return retval;
+}
+
+
+[문제 4] 정수 N이 주어집니다. N 이상이며 N의 자리수 보다 한 자리 큰 최소 정수 값을 출력하는 프로그램을 작성하세요.
+
+#include <stdio.h>
+
+// 여기에 정수 값 N을 전달받아 N값 이상이며 N의 자리수 보다 한 자리 큰 최소 정수 값을 출력하는 함수를 선언합니다.
+// N 값에 대한 N 이상, 한자리수 이상의 최소 값은 다음과 같습니다.
+//
+// N		값
+// 1		1
+// 9		10
+// 10		10
+// 99		100
+// 100		100
+// 101		1000
+// 999		1000
+// 3455		10000
+int intRound(int n); 
+
+int main() {
+
+    int N = 0;
+    printf("입력 : ");
+
+    if (scanf("%d", &N) == 1) {
+		int result = intRound(N);
+		printf("%d값의 올림 값 : %d\n", N, result);
+    } else {
+        printf("잘못 입력하였습니다.\n");
+    }
+
+    printf("프로그램을 종료합니다.\n");
+    return 0;
+}
+
+// 여기에 정수 값 N을 전달받아 N값 이상이며 N의 자리수 보다 한 자리 큰 최소 정수 값을 출력하는 함수를 정의합니다.
+int intRound(int n) {
+	int retval = 1;
+	int tmp = n;
+	if (n == 0) return 0;
+	
+	while (tmp > 0) {		
+		retval *= 10;									
+		tmp /= 10;		
+	}
+	
+	retval = (n == (retval / 10)) ? (retval / 10) : retval;
+	printf("retval : %d\n", retval);
+	
+	
+	
+	return retval;
+}
+
+
+
+[문제 5] 실수 값 N을 받아 N 이상의 최소 정수 값을 반환하는 함수를 작성하세요.
+
+#include <stdio.h>
+
+int doubleRound(double n);
+
+int main() {
+
+    double N = 0;
+    printf("실수값 입력 : ");
+
+    if (scanf("%lf", &N) == 1) {
+		int result = doubleRound(N);
+		printf("%lf이하의 최대 정수 값 : %d\n", N, result);
+    } else {
+        printf("잘못 입력하였습니다.\n");
+    }
+
+    printf("프로그램을 종료합니다.\n");
+    return 0;
+}
+
+int doubleRound(double n) {
+	return (n == (int)n ? n : (int)n + 1);
+}
+
+
+
+[문제 6] 실수 값 N을 받아 N 이하의 최대 정수 값을 반환하는 함수를 작성하세요.
+
+#include <stdio.h>
+
+int doubleRound(double n);
+
+int main() {
+
+    double N = 0;
+    printf("실수값 입력 : ");
+
+    if (scanf("%lf", &N) == 1) {
+		int result = doubleRound(N);
+		printf("%lf이하의 최대 정수 값 : %d\n", N, result);
+    } else {
+        printf("잘못 입력하였습니다.\n");
+    }
+
+    printf("프로그램을 종료합니다.\n");
+    return 0;
+}
+
+int doubleRound(double n) {
+	return n;
+}
+
+
+
+[문제 7] 실수 값 N과 정수 값 M을 전달 받아 N의 값의 소수점 이하를 M의 자리까지 잘라내어 반환하는 함수를 작성하세요.
+함수 호출의 결과는 다음과 같습니다.
+
+N		M	결과
+3.14159		0	3.0
+3.14159		1	3.1
+3.14159		2	3.14
+3.14159		3	3.141
+3.14159		4	3.1415
+
+#include <stdio.h>
+
+double doubleRound(double n, int m);
+
+int main() {
+
+    double N = 0;
+    int M = 0;
+    printf("실수값과 자리수 입력 : ");
+
+    if (scanf("%lf %d", &N, &M) == 2) {
+		double result = doubleRound(N, M);
+		printf("%lf : %lf\n", N, result);
+    } else {
+        printf("잘못 입력하였습니다.\n");
+    }
+
+    printf("프로그램을 종료합니다.\n");
+    return 0;
+}
+
+double doubleRound(double n, int m) {
+	double tmp = n;
+	int i = m;
+	int j = 1;
+	while (i>0) {
+		tmp *= 10;
+		i--;
+		j*=10;
+	}
+	
+	printf("tmp : %lf\n", tmp);
+	if (m == 0) return (int)tmp;
+	return (int)tmp / (double)j;
+}

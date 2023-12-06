@@ -1,0 +1,328 @@
+[문제 1] N개의 배열이 주어질 때 배열 내에서 원소를 찾는 프로그램을 작성하세요.
+
+  int arr[] = { 5, 2, 9, 6, 1, 3, 8, 7, 4 };
+
+  요구조건
+
+	배열 내의 원소를 찾아 원소의 인덱스를 반환하는 함수를 선언하고 정의합니다. 함수는 배열에서 원소를 찾았을 경우 인덱스 값을 반환하며 값이 없을 경우 -1 값을 반환합니다.
+	main() 함수에서는 배열과 찾고자 하는 값으로 함수를 호출하고 호출 결과에 따라 처리합니다.
+
+
+#include <stdio.h>
+
+int find(int *arr, int count, int n);
+
+int main() {
+	int arr[] = { 5, 2, 9, 6, 1, 3, 8, 7, 4 };
+	int count = (int)(sizeof(arr) / sizeof(arr[0]));
+	int n = 0;
+	
+	printf("찾을 값 입력 : ");
+	if (scanf("%d", &n) == 1) {	
+		int index = find(arr, count, n);
+		printf("%d 값의 인덱스 : %d\n", n, index);
+	}
+	else {
+		printf("잘못 입력하였습니다.\n");
+	}
+	return 0;	
+}
+
+int find(int *arr, int count, int n) {
+	int retval = -1;
+	for (int i=0 ; i<count ; i++) {
+		if (arr[i] == n) {
+			retval = i;
+			break;
+		}
+	}
+	return retval;
+}
+
+
+
+
+
+
+[문제 2] 다음과 같이 int형 배열 src와 dest가 주어집니다. 배열 src의 원소의 값을 dest 배열에 복사하는 프로그램을 작성하세요.
+
+  int src[] = { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10 };
+  int dest[10];
+
+  요구조건
+
+	두 배열을 파라미터로 전달받아 복사하는 함수를 선언하고 정의합니다.
+	main() 함수에서는 두 함수를 전달인자로 호출하여 배열 원소의 복사를 수행합니다.
+	배열 원소를 복사하고 난 후에는 src와 dest 배열의 값을 출력합니다.
+
+
+#include <stdio.h>
+
+void print(int *arr, int count);
+void copy(int *dest, int *src, int count);
+
+int main() {
+	int src[] = { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10 };
+	int dest[10] =  { 0 };
+	int count = (int)(sizeof(src) / sizeof(src[0]));
+	print(dest, count);
+	copy(dest, src, count);
+	print(dest, count);
+	
+	return 0;	
+}
+
+void print(int *arr, int count) {
+	for (int i=0 ; i<count ; i++) {
+		printf("%d ", arr[i]);
+	}
+	printf("\n");
+}
+
+void copy(int *dest, int *src, int count) {
+	for (int i=0 ; i<count ; i++) {
+		dest[i] = src[i];
+	}	
+}
+
+
+
+
+
+
+[문제 3] N개의 배열이 주어질 때 최대 값과 최소 값을 구하고 총합과 평균 값을 구하는 프로그램을 작성하세요.
+
+  int jumsu[] = { 94, 100, 93, 88, 85 };
+
+  요구조건
+
+	최소 값을 구하는 함수를 선언하고 정의합니다.
+	최대 값을 구하는 함수를 선언하고 정의합니다.
+	총합을 구하는 함수를 선언하고 정의합니다.
+	main() 함수에서는 최소 값, 최대 값, 총합을 구하는 함수 호출을 통해 얻어낸 값을 출력합니다.
+
+
+
+#include <stdio.h>
+
+void print(int *arr, int count);
+int min(int *arr, int count);
+int max(int *arr, int count);
+int total(int *arr, int count);
+
+int main() {
+  	int jumsu[] = { 94, 100, 93, 88, 85 };
+	int count = (int)(sizeof(jumsu) / sizeof(jumsu[0]));
+	printf("%d\n", count);
+	
+	int n = min(jumsu, count);
+	int m = max(jumsu, count);
+	int t = total(jumsu, count);
+	double v = (double)t / count;
+	
+	printf("%-20s : %d\n", "최대점수", n);
+	printf("%-20s : %d\n", "최소점수", m);
+	printf("%-20s : %d\n", "총점", t);
+	printf("%-20s : %.2lf\n", "평균", v);
+	
+	return 0;	
+}
+
+void print(int *arr, int count) {
+	for (int i=0 ; i<count ; i++) {
+		printf("%d ", arr[i]);
+	}
+	printf("\n");
+}
+
+int max(int *arr, int count) {
+	int max = arr[0];
+	for (int i=1 ; i<count ; i++) {
+		if (arr[i] > max) {
+			max = arr[i];
+		}
+	}
+	return max;
+}
+
+int min(int *arr, int count) {
+	int min = arr[0];
+	for (int i=1 ; i<count ; i++) {
+		if (arr[i] < min) {
+			min = arr[i];
+		}
+	}
+	return min;
+}
+
+int total(int *arr, int count) {
+	int n = 0;
+	for (int i=0 ; i<count ; i++) {
+		n += arr[i];
+	}
+	return n;
+}
+
+
+
+
+
+
+
+[문제 4] 정렬된 값을 원소로 하는 두 개의 배열과 두 배열을 합치기 위한 빈 배열이 주어집니다. 두 배열을 합쳐 하나의 배열로 만듭니다. 이때 두 배열이 합쳐진 배열 또한 정렬 상태를 유지해야 합니다.
+
+  int ary1[] = { 1, 3, 4, 6, 7 };
+  int ary2[] = { 2, 5, 8, 9, 10 };
+  int sorted[10];	// ary1과 ary2 배열 원소의 값을 합칠 배열
+
+  요구조건
+	
+	ary1과 ary2 두 배열의 값을 합치기 위한 sorted 배열은 전역배열로 선언합니다.
+
+
+#include <stdio.h>
+
+int sorted[10];
+void print(int *arr, int count);
+void merge(int *arr1, int arr1Count, int *arr2, int arr2Count);
+
+int main() {
+	int ary1[] = { 1, 3, 4, 6, 7 };
+	int ary1Count = (int)(sizeof(ary1)/sizeof(ary1[0]));	
+	int ary2[] = { 2, 5, 8, 9, 10 };
+	int ary2Count = (int)(sizeof(ary2)/sizeof(ary2[0]));
+	int sortedCount = (int)(sizeof(sorted)/sizeof(sorted[0]));
+	print(sorted, sortedCount);
+	merge(ary1, ary1Count, ary2, ary2Count);
+	print(sorted, sortedCount);
+
+	return 0;
+}
+
+void print(int *arr, int count) {
+	for (int i=0 ; i<count ; i++) {
+		printf("%d ", arr[i]);
+	}
+	printf("\n");
+}
+
+void merge(int *arr1, int arr1Count, int *arr2, int arr2Count) {
+	int i = 0;
+	int j = 0;
+	int k = 0;
+	
+	while ((i < arr1Count) && (j < arr2Count)) {
+		if (arr1[i] < arr2[j]) sorted[k++] = arr1[i++];
+		else sorted[k++] = arr2[j++];
+	}
+	while (i < arr1Count) sorted[k++] = arr1[i++];
+	while (j < arr2Count) sorted[k++] = arr2[j++];
+}
+
+
+
+
+
+
+
+[문제 5] N개의 배열이 주어질 때 최대 빈도 수를 구하는 프로그램을 작성하세요.
+
+  아래 배열 원소중 최대 빈도 수는 4입니다.
+
+  int ary[] = { 1, 2, 3, 4, 2, 3, 4, 5, 4, 5 };
+  int cnt[10] = { 0 };
+
+
+#include <stdio.h>
+
+int cnt[10] = { 0 };
+void print(int *arr, int count);
+int findMaxCount(int *arr, int count);
+
+int main() {
+	int ary[] = { 1, 2, 3, 4, 2, 3, 4, 5, 4, 5 };
+	int count = (int)(sizeof(ary)/sizeof(ary[0]));	
+	int max = findMaxCount(ary, count);
+	print(ary, count);
+	printf("최대 빈도의 수 : %d\n", max);
+
+	return 0;
+}
+
+void print(int *arr, int count) {
+	for (int i=0 ; i<count ; i++) {
+		printf("%d ", arr[i]);
+	}
+	printf("\n");
+}
+
+int findMaxCount(int *arr, int count) {
+	for (int i=0 ; i<count ; i++) {
+		cnt[arr[i]]++;
+	}
+	int max = cnt[0];
+	int cntCount = (int)(sizeof(cnt)/sizeof(cnt[0]));
+	for (int i=1 ; i<cntCount ; i++) {
+		if (cnt[i] > max) {
+			max = i;
+		}
+	}
+	return max;
+}
+
+
+
+
+
+
+[문제 6] N개의 원소를 가지는 배열과 빈 배열이 주어집니다. 빈 배열을 사용하여 배열 원소의 값을 정렬하는 프로그램을 작성하세요.
+
+  int arr[] = { 6, 2, 9, 8, 1, 2, 3, 9, 4, 8, 5, 7 };
+  int counter[10] = { 0 };
+
+  문제해결의 절차는 다음과 같습니다.
+
+	arr 배열의 모든 원소에 대하여 arr 배열 원소의 값을 인덱스로 하여 sorted 배열 원소의 값을 1 증가시킵니다.
+	sorted 배열의 모든 원소에 대하여 sorted 원소의 값만큼 sorted 원소의 인덱스 값을 arr 배열에 순차적으로 저장합니다.
+
+
+#include <stdio.h>
+
+int counter[10] = { 0 };
+void print(int *arr, int count);
+void sort(int *arr, int count);
+
+int main() {
+	int arr[] = { 6, 2, 9, 8, 1, 2, 3, 9, 4, 8, 5, 7 };
+	int count = (int)(sizeof(arr)/sizeof(arr[0]));	
+	print(arr, count);
+	sort(arr, count);
+	print(arr, count);
+	
+	return 0;
+}
+
+void print(int *arr, int count) {
+	for (int i=0 ; i<count ; i++) {
+		printf("%d ", arr[i]);
+	}
+	printf("\n");
+}
+
+void sort(int *arr, int count) {
+	for (int i=0 ; i<count ; i++) {
+		counter[arr[i]]++;
+	}
+	int cnt = (int)(sizeof(counter)/sizeof(counter[0]));
+	int k = 0;
+	for (int i=0 ; i<cnt ; i++) {
+		for (int j=0 ; j<counter[i] ; j++) {
+			arr[k++] = i;
+		}
+	}
+}
+
+
+
+
+
