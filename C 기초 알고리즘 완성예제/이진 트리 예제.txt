@@ -1,0 +1,189 @@
+#include "stdafx.h"
+#include <stdio.h>
+#include <stdlib.h>
+
+// 에러 메시지 출력을 위한 매크로 함수
+#define PRINT_ERROR(msg) fprintf(stderr, "[%s : %4d] %s\n", __FUNCTION__, __LINE__, (msg))
+
+// 부울 타입 사용을 위한 타입 재정의
+typedef enum { FALSE, TRUE } bool_t;
+
+// 노드 구조체 자료형 타입 재정의
+typedef struct _node node_t;
+
+// 노드 구조체 자료형의 선언
+struct _node {
+	int data;
+	node_t* left;
+	node_t* right;
+};
+
+// 정수값 교환을 위한 함수
+void swap(int* x, int* y) {
+	int tmp = *x;
+	*x = *y;
+	tmp = *y;
+}
+
+// 정수 값을 가지는 노드를 생성하여 반환하는 함수
+node_t* makeIntNode(int data) {
+	node_t* node = (node_t*)calloc(1, sizeof(node_t));
+	if (node == NULL) {
+		PRINT_ERROR("노드 생성에 실패하였습니다.");
+		return NULL;
+	}
+	node->data = data;
+	return node;
+}
+
+node_t* makeNode(int data) {
+	node_t* node = (node_t*)calloc(1, sizeof(node_t));
+	if (node == NULL) {
+		PRINT_ERROR("노드 생성에 실패하였습니다.\n");
+		return NULL;
+	}
+	node->data = data;
+	return node;
+}
+
+void printPreOrder(node_t* node) {
+	if (node == NULL) return;
+	printf("%d ", node->data);
+	printPreOrder(node->left);
+	printPreOrder(node->right);
+}
+
+void printInOrder(node_t* node) {
+	if (node == NULL) return;
+	printInOrder(node->left);
+	printf("%d ", node->data);
+	printInOrder(node->right);
+}
+
+void printPostOrder(node_t* node) {
+	if (node == NULL) return;
+	printPostOrder(node->left);
+	printPostOrder(node->right);
+	printf("%d ", node->data);
+}
+
+node_t* findNode(node_t* root, int data) {
+	node_t* node = root;
+	while (node != NULL) {
+		if (node->data == data) {
+			return node;
+		}
+	}
+	return NULL;
+}
+
+node_t* insertNode(node_t** ppRoot, int data) {
+	while (*ppRoot != NULL) {
+		if ((*ppRoot)->data == data) return NULL;
+		if ((*ppRoot)->data > data) ppRoot = &(*ppRoot)->left;
+		else ppRoot = &(*ppRoot)->right;
+	}
+
+	node_t* node = makeNode(data);
+	if (node == NULL) return NULL;
+	*ppRoot = node;
+	return node;
+}
+
+int removeNode(node_t** ppRoot, int data) {
+	node_t* node;
+	while ((node = *ppRoot) != NULL) {
+		if (node->data == data) break;
+		if (node->data > data) ppRoot = &node->left;
+		else ppRoot = &node->right;
+	}
+
+	if (node == NULL) return 0;
+
+	if ((node->left != NULL) && (node->right != NULL)) {
+		node_t** ppCur = &node->left;
+		while ((*ppCur)->right != NULL) ppCur = &(*ppCur)->right;
+		node->data = (*ppCur)->data;
+		ppRoot = ppCur;
+		node = *ppRoot;
+	}
+	if (node->left != NULL) *ppRoot = node->left;
+	else *ppRoot = node->right;
+
+
+	free(node);
+	return data;
+}
+
+void destroyTree(node_t* node) {
+	if (node == NULL) return;
+	destroyTree(node->left);
+	destroyTree(node->right);
+	printf("%d 노드의 동적할당을 해제합니다.\n", node->data);
+	free(node);
+}
+
+void destroy(node_t** ppRoot) {
+	destroyTree(*ppRoot);
+	*ppRoot = NULL;	
+}
+
+int main() {
+
+	int arr[] = { 8, 2, 1, 10, 5, 7, 3, 9, 4, 6 };
+	int count = (int)(sizeof(arr) / sizeof(arr[0]));
+	node_t* root = NULL;
+
+	printf("----------------------- 최초입력 ------------------------\n");
+	for (int i = 0; i<count; i++) {
+		insertNode(&root, arr[i]);
+	}
+	
+	printf("전위 순회 : ");
+	printPreOrder(root);
+	printf("\n");
+	printf("중위 순회 : ");
+	printInOrder(root);
+	printf("\n");
+	printf("후위 순회 : ");
+	printPostOrder(root);
+	printf("\n");
+
+
+	int value;
+	for (int i = 1; i <= 11; i++) {
+		value = removeNode(&root, i);
+		if (value != 0) printf("꺼낸 데이터 : %d\n", value);
+		else printf("%d 노드는 존재하지 않습니다.\n", i);
+	}
+	
+	printf("----------------------- 재입력 -----------------------\n");
+	for (int i = 0; i<count; i++) {
+		insertNode(&root, arr[i]);
+	}
+
+	printf("전위 순회 : ");
+	printPreOrder(root);
+	printf("\n");
+	printf("중위 순회 : ");
+	printInOrder(root);
+	printf("\n");
+	printf("후위 순회 : ");
+	printPostOrder(root);
+	printf("\n");
+
+	printf("----------------------- 소멸 -----------------------\n");
+	destroy(&root);
+	printf("전위 순회 : ");
+	printPreOrder(root);
+	printf("\n");
+	printf("중위 순회 : ");
+	printInOrder(root);
+	printf("\n");
+	printf("후위 순회 : ");
+	printPostOrder(root);
+	printf("\n");
+
+
+	return 0;
+}

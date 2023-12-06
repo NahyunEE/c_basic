@@ -1,0 +1,150 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+#define PRINT_ERROR(msg) fprintf(stderr, "[%s:%4d] %s\n", __FUNCTION__, __LINE__, (msg))
+
+typedef struct _node node_t;
+
+struct _node {
+    int data;
+    node_t* next;
+};
+
+void intSwap(void* x, void* y) {
+    int tmp = *(int*)x;
+    *(int*)x = *(int*)y;
+    *(int*)y = tmp;
+}
+
+node_t* makeNode(int data) {
+    node_t* node = (node_t*) malloc(sizeof(node_t));
+    if (node == NULL) {
+        PRINT_ERROR("노드 생성에 실패하였습니다.");
+        return node;
+    }
+    memset(node, 0, sizeof(node_t));
+    node->data = data;
+    return node;
+}
+
+void printNode(node_t* node) {
+    printf("%d ", node->data);
+}
+
+void printList(node_t* head) {
+    if (head == NULL) {
+        printf("연결 리스트에 등록된 노드가 없습니다.\n");
+        return;
+    }
+
+    node_t* node = head;
+    while (node != NULL) {
+        printNode(node);
+        node = node->next;
+    }
+    printf("\n");
+}
+
+int insertNode(node_t** head, int data) {
+    node_t* node = makeNode(data);
+    if (node == NULL) return 0;
+    node->next = *head;
+    *head = node;
+    return 1;
+}
+
+int intCompare(void* a, void* b) {
+    return *(int*)a - *(int*)b;
+}
+
+node_t* findNode(node_t* head, int data) {
+    node_t* node = head;
+    while (node != NULL) {
+        if (intCompare(&node->data, &data) == 0) {
+            return node;
+        }
+        node = node->next;
+    }
+    return NULL;
+}
+
+int appendNode(node_t** ppHead, int data) {
+    while (*ppHead != NULL) {
+        ppHead = &(*ppHead)->next;
+    }
+    node_t* node = makeNode(data);
+    if (node == NULL) return 0;
+    *ppHead = node;
+    return 1;
+}
+
+int removeNode(node_t** ppHead, int data) {
+    while (*ppHead != NULL) {
+        if (intCompare(&(*ppHead)->data, &data) == 0) {
+            break;
+        }
+        ppHead = &(*ppHead)->next;
+    }
+    if (*ppHead == NULL) {
+        printf("%d 노드는 존재하지 않는 노드입니다.\n", data);
+        return 0;
+    }
+    node_t* node = *ppHead;
+    *ppHead = node->next;
+    free(node);
+    printf("%d 노드를 삭제하였습니다.\n", data);
+    return 0;
+}
+
+void sortNode(node_t** ppHead) {
+    while (*ppHead != NULL) {
+        node_t* node = (*ppHead)->next;
+        while (node != NULL) {
+            if (intCompare(&(*ppHead)->data, &node->data) > 0) {
+                intSwap(&(*ppHead)->data, &node->data);
+            }
+            node = node->next;
+        }
+        ppHead = &(*ppHead)->next;
+    }
+}
+
+void destroy(node_t** ppHead) {
+    while (*ppHead != NULL) {
+        node_t* node = *ppHead;
+        *ppHead = node->next;
+        printf("%d 노드의 동적할당을 해제합니다.\n", node->data);
+        free(node);
+    }
+}
+
+int main() {
+    node_t* head = NULL;
+    printList(head);
+    for (int i=1 ; i<10 ; i++) {
+        insertNode(&head, i*10);
+    }
+    printList(head);
+    int data = 30;
+    node_t* node = findNode(head, data);
+    if (node != NULL) {
+        printf("%d 노드가 검색되었습니다.\n", data);
+    }
+    else {
+        printf("%d 노드는 존재하지 않습니다.\n", data);
+    }
+    sortNode(&head);
+    removeNode(&head, 20);
+    removeNode(&head, 20);
+    removeNode(&head, 30);
+    printList(head);
+    appendNode(&head, 20);
+    appendNode(&head, 30);
+    insertNode(&head, 15);
+    printList(head);
+    destroy(&head);
+    printList(head);
+
+    return 0;
+}

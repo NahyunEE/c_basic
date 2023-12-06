@@ -1,0 +1,124 @@
+#include "stdafx.h"
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+#define PRINT_ERROR(msg) printf("[%s:%4d] %s\n", __FUNCTION__, __LINE__, (msg))
+typedef enum { FALSE, TRUE } bool_t;
+
+typedef struct _node node_t;
+struct _node {
+	int data;
+	node_t* next;
+	node_t* prev;
+};
+
+typedef struct {
+	node_t* head;
+	node_t* tail;
+	int count;
+} queue_t;
+
+bool_t is_empty(queue_t* queue) {
+	return ((queue->head == queue->tail) && (queue->tail == NULL) ? TRUE : FALSE);
+}
+
+void print(queue_t* pq) {
+	node_t* node = pq->tail;
+	while (node != NULL) {
+		printf("%d ", node->data);
+		node = node->prev;
+	}
+	printf("\n");
+}
+
+node_t* makeNode(int data) {
+	node_t* node = (node_t*)malloc(sizeof(node_t));
+	if (node == NULL) {
+		PRINT_ERROR("노드 생성에 실패하였습니다.");
+		return 0;
+	}
+	memset(node, 0, sizeof(node_t));
+	node->data = data;
+	return node;
+}
+
+bool_t enqueue(queue_t* pq, int data) {
+    node_t* node = makeNode(data);
+	if (node == NULL) return FALSE;
+	if (pq->head == NULL) {
+		pq->head = node;
+	}
+	if (pq->tail == NULL) {
+		pq->tail = node;
+	}
+	else {
+		node->prev = pq->head->prev;		
+		node->next = pq->head;
+		pq->head->prev = node;
+		pq->head = node;
+	}
+		
+	pq->count++;
+	return TRUE;
+}
+
+int dequeue(queue_t* pq) {
+	if (is_empty(pq)) {
+		PRINT_ERROR("저장된 데이터가 없습니다.");
+		errno = 1;
+		return 0;
+	}
+	node_t* node = pq->tail;
+	int dequeueData = node->data;
+	if (node->prev == NULL) {
+		pq->head = NULL;
+		pq->tail = NULL;
+	}
+	else {
+		node->prev->next = node->next;
+		pq->tail = node->prev;
+	}
+
+	free(node);
+	pq->count--;
+	return dequeueData;
+}
+
+void destroy(queue_t* pq) {
+	while (TRUE) {
+		errno = 0;
+		int dequeueData = dequeue(pq);
+		if (errno != 0) break;
+		printf("%d 노드의 동적할당을 해제합니다.\n", dequeueData);
+	}
+	pq->count = 0;
+}
+
+int main() {
+	queue_t queue = { NULL, NULL, 0 };
+	
+	for (int i = 0; i < 2; i++) {
+		for (int j = 1; j <= 10; j++) {
+			enqueue(&queue, j);
+		}
+		print(&queue);
+
+		for (int j = 0; j <= 10; j++) {
+			errno = 0;
+			int dequeueData = dequeue(&queue);			
+			if (errno != 0) break;
+			if (errno == 0) printf("dequeueData : %d\n", dequeueData);
+		};
+		print(&queue);
+	}
+
+	for (int j = 1; j <= 10; j++) {
+		enqueue(&queue, j);
+	}
+	print(&queue);
+	destroy(&queue);
+	print(&queue);
+
+	return 0;
+}

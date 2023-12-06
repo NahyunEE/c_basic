@@ -1,0 +1,79 @@
+● 재귀 호출 함수 사용 이분검색
+
+#include <stdio.h>
+
+int find(int* ary, int left, int right, int data) {
+	if (left > right) {
+		return -1;
+	}
+	int middle = (left + right) / 2;
+	if (data == ary[middle])
+		return middle;
+	if (data < ary[middle])
+		return find(ary, 0, middle - 1, data);
+	else
+		return find(ary, middle + 1, right, data);
+}
+
+int main() {
+	int arr[] = { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10 };
+	int count = (int)(sizeof(arr) / sizeof(arr[0]));
+
+
+	for (int i = 1; i <= 11; i++) {
+		int findedDataIndex = find(arr, 0, count - 1, i);
+		if (findedDataIndex > 0) printf("검색 값의 인덱스 값 : %d\n", findedDataIndex);
+		else printf("데이터 검색에 실패하였습니다.\n");
+	}
+
+	return 0;
+}
+
+
+
+● 반복문 사용 이분검색
+
+#include <stdio.h>
+
+int stack[2] = { 0 };
+int top = 0;
+
+int find(int* ary, int data) {
+	while (top >= 2) {
+		int right = stack[--top];
+		int left = stack[--top];
+		if (left > right) break;
+
+		int middle = (left + right) / 2;
+		if (ary[middle] == data) {
+			return middle;
+		}
+		
+		if (ary[middle] > data) {
+			stack[top++] = left;
+			stack[top++] = middle - 1;
+		}
+		else {
+			stack[top++] = middle + 1;
+			stack[top++] = right;
+		}
+	}
+
+	return -1;
+}
+
+int main() {
+	int arr[] = { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10 };
+	int count = (int)(sizeof(arr) / sizeof(arr[0]));
+	
+	for (int i = 1; i <= 11; i++) {
+		top = 0;
+		stack[top++] = 0;
+		stack[top++] = count - 1;
+		int findedDataIndex = find(arr, i);
+		if (findedDataIndex > -1) printf("검색 값의 인덱스 값 : %d\n", findedDataIndex);
+		else printf("데이터 검색에 실패하였습니다.\n");
+	}
+
+	return 0;
+}

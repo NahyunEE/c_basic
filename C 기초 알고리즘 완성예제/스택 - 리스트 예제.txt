@@ -1,0 +1,101 @@
+#include "stdafx.h"
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+#define PRINT_ERROR(msg) printf("[%s:%4d] %s\n", __FUNCTION__, __LINE__, (msg))
+typedef struct _node node_t;
+typedef enum { FALSE, TRUE } bool_t;
+
+struct _node {
+	int data;
+	node_t* next;
+};
+
+void print(node_t* node) {
+	while (node != NULL) {
+		printf("%d ", node->data);
+		node = node->next;
+	}
+	printf("\n");
+}
+
+bool_t is_empty(node_t* node) {
+	return (node == NULL ? TRUE : FALSE);
+}
+
+node_t* makeNode(int data) {
+	node_t* node = (node_t*)malloc(sizeof(node_t));
+	if (node == NULL) {
+		PRINT_ERROR("노드 생성에 실패하였습니다.");
+		return 0;
+	}
+	memset(node, 0, sizeof(node));
+	node->data = data;
+	return node;
+}
+
+bool_t push(node_t** stack, int data) {
+	node_t* node = makeNode(data);
+	if (node == NULL)
+		return FALSE;
+	node->next = *stack;
+	*stack = node;
+	return TRUE;
+}
+
+int pop(node_t** stack) {
+	if (*stack == NULL) {
+		PRINT_ERROR("저장된 데이터가 없습니다.");
+		errno = 1;
+		return 0;
+	}
+	node_t* node = *stack;
+	*stack = node->next;
+	int popData = node->data;
+	free(node);
+	return popData;
+}
+
+void destroy(node_t** stack) {
+	printf("스택을 소멸합니다.\n");
+	while (*stack != NULL) {
+		errno = 0;
+		int popData = pop(stack);
+		if (errno == 0) {
+			printf("%d 데이터 영역의 동적 할당을 해제 하였습니다.\n", popData);
+		}
+		else {
+			break;
+		}
+	}
+}
+
+int main() {
+	node_t* stack = NULL;
+
+	for (int i = 1; i <= 10; i++) {
+		push(&stack, i);
+	}
+	print(stack);
+
+	for (int i = 1; i <= 11; i++) {
+		int popData = pop(&stack);
+		if (errno == 0) {
+			printf("popData : %d\n", popData);
+		}
+		else {
+			break;
+		}
+	};
+
+	for (int i = 1; i <= 10; i++) {
+		push(&stack, i);
+	}
+	print(stack);
+
+	destroy(&stack);
+	print(stack);
+
+	return 0;
+}

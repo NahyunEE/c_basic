@@ -1,0 +1,97 @@
+#include "stdafx.h"
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+// 에러 메시지 출력을 위한 매크로 함수
+#define PRINT_ERROR(msg) fprintf(stderr, "[%s:%4d] %s\n", __FUNCTION__, __LINE__, (msg))
+
+// 스택 자료구조 관리 구조체 자료형
+typedef struct {
+	int* data;
+	int top;
+	int size;
+} stack_t;
+
+typedef enum _bool bool_t;
+
+enum _bool { FALSE, TRUE };
+
+stack_t* init(stack_t* s, int count) {
+	s->data = (int*)malloc(sizeof(int) * count);
+	if (s->data == NULL) {
+		PRINT_ERROR("스택 데이터 공간 동적 할당에 실패하였습니다.");
+		return NULL;
+	}
+	memset(s->data, 0, sizeof(int) * count);
+	s->top = 0;
+	s->size = count;
+	return s;
+}
+
+bool_t is_empty(stack_t* s) {
+	return (s->top == 0 ? TRUE : FALSE);
+}
+
+bool_t is_full(stack_t* s) {
+	return (s->top >= s->size ? TRUE : FALSE);
+}
+
+void destroy(stack_t* s) {
+	free(s->data);
+	s->data = NULL;
+	s->top = 0;
+	s->size = 0;
+}
+
+void print(stack_t* s) {
+	for (int i = s->top - 1; i >= 0; i--) {
+		printf("%d ", s->data[i]);
+	}
+	printf("\n");
+}
+
+bool_t push(stack_t* s, int data) {
+	if (is_full(s)) {
+		PRINT_ERROR("스택이 가득 찼습니다.");
+		return FALSE;
+	}
+	s->data[s->top++] = data;
+	return TRUE;
+}
+
+int pop(stack_t* s) {
+	if (is_empty(s)) {
+		PRINT_ERROR("저장된 데이터가 없습니다.");
+		errno = 1;
+	}
+	return s->data[--s->top];
+}
+
+int main() {
+
+	stack_t stack = { NULL, 0, 0 };
+	if (init(&stack, 10) == NULL) {	
+		exit(1);
+	}
+
+	for (int i = 1; i <= 11; i++) {
+		push(&stack, i);
+	}
+	print(&stack);
+
+	for (int i = 1; i <= 11; i++) {
+		errno = 0;
+		int popData = pop(&stack);
+		if (errno == 0) {
+			printf("pop 데이터 : %d\n", popData);
+		}
+		else {
+			break;
+		}
+	}
+
+	destroy(&stack);
+
+	return 0;
+}

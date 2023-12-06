@@ -1,0 +1,307 @@
+#include "stdafx.h"
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+// 회원 구조체 자료형
+typedef struct {
+	char *name;
+	int age;
+} person_t;
+
+// 우선순위 큐 관리 구조체 자료형의 선언
+typedef struct {
+	person_t **persons;
+	int size;
+	int count;
+} queue_t;
+
+/*
+* 함수명 : makeString
+* 파라미터
+* str : 저장문자열
+* 반환값
+* 성공시 : 문자열저장주소
+* 실패시 : NULL
+* 설명
+* 인자로 전달받은 문자열 만큼의 배열 공간을 동적할당하고 문자열을 복사한 후
+* 동적할당된 배열 공간의 시작주소를 반환한다.
+*/
+char* makeString(const char *str) {
+	char *buffer = (char*)malloc(strlen(str) + 1);
+	if (buffer == NULL)
+		return buffer;
+	strcpy(buffer, str);
+	return buffer;
+}
+
+/*
+* 함수명 : makePerson
+* 파라미터
+* name : 이름값
+* age : 연령값
+* 반환값
+* 성공시 : person_t 구조체 주소
+* 실패시 : NULL
+* 설명
+* 인자로 전달받은 정보를 가지는 person_t 구조체 공간을 동적할당한 후
+* 주소를 반환한다.
+*/
+person_t* makePerson(const char *name, int age) {
+	person_t *person = (person_t*)malloc(sizeof(person_t));
+
+	if (person == NULL)
+		return person;
+
+	memset(person, 0, sizeof(person_t));
+	person->name = makeString(name);
+	person->age = age;
+
+	if (person->name == NULL) {
+		free(person->name);
+		free(person);
+	}
+	return person;
+}
+
+// 비교 함수 포인터 타입 재지정
+typedef int(*compare_t)(void*, void*);
+
+/*
+* 함수명 : nameCompare
+* 파라미터
+* p1 : 값을 비교할 대상 1
+* p2 : 값을 비교할 대상 2
+* 반환값
+* 성공시
+* 이름 값의 차이 값
+* 설명
+* 인자로 전달받은 포인터를 person_t* 타입으로 형 변환 한 뒤
+* 두 포인터가 참조하는 구조체의 name 멤버 값을 비교하여 차이값을 반환한다.
+*/
+int nameCompare(void *p1, void *p2) {
+	person_t *pa = (person_t*)p1;
+	person_t *pb = (person_t*)p2;
+
+	return strcmp(pa->name, pb->name);
+}
+
+/*
+* 함수명 : ageCompare
+* 파라미터
+* p1 : 값을 비교할 대상 1
+* p2 : 값을 비교할 대상 2
+* 반환값
+* 성공시
+* 연령의 차이 값
+* 설명
+* 인자로 전달받은 포인터를 person_t* 타입으로 형 변환 한 뒤
+* 두 포인터가 참조하는 구조체의 age 멤버 값을 비교하여 차이값을 반환한다.
+*/
+int ageCompare(void *p1, void *p2) {
+	person_t *pa = (person_t*)p1;
+	person_t *pb = (person_t*)p2;
+
+	return pa->age - pb->age;
+}
+
+/*
+* 함수명 : swap
+* 파라미터
+* p1 : 값을 교환할 대상 1
+* p2 : 값을 교환할 대상 2
+* 반환값
+* 없음
+* 설명
+* 인자로 전달받은 포인터의 값을 교환한다.
+*/
+void swap(person_t **p1, person_t **p2) {
+	person_t *tmp = *p1;
+	*p1 = *p2;
+	*p2 = tmp;
+}
+
+/*
+* 함수명 : enqueue
+* 파라미터
+* pQueue : 우선순위 큐 관리 구조체
+* person : 우선순위 큐에 저장할 데이터
+* compare : 우선순위 결정에 사용될 비교 함수
+* 반환값
+* 성공시 : 1
+* 실패시 : 0
+* 설명
+* 첫 번째 인자로 전달받은 구조체에서 관리하는 큐 공간에 두 번째 인수로 전달받은
+* 구조체 주소를 저장한다.
+* 큐에 구조체 주소를 저장한 후에는 Up-Heap(Heapization)을 수행하여야 한다.
+*/
+int enqueue(queue_t *pQueue, person_t *person, compare_t compare) {
+	if (pQueue->count >= pQueue->size) {
+		printf("저장 공간이 부족합니다.\n");
+		return 0;
+	}
+
+	int pos = ++pQueue->count;
+	pQueue->persons[pos] = person;
+	while ((pos > 1)
+		&& (compare(pQueue->persons[pos], pQueue->persons[pos / 2]) < 0)) {
+		swap(pQueue->persons + pos, pQueue->persons + (pos / 2));
+		pos = pos / 2;
+	}
+	return 1;
+}
+
+/*
+* 함수명 : dequeue
+* 파라미터
+* pQueue : 우선순위 큐 관리 구조체
+* person : 우선순위 큐에서 꺼낸 구조체를 참조하기 위한 포인터
+* compare : 우선순위 결정에 사용될 비교 함수
+* 반환값
+* 성공시 : 1
+* 실패시 : 0
+* 설명
+* 첫 번째 인자로 전달받은 구조체에서 관리하는 큐 공간에서 최우선순위의 구조체 주소를 꺼낸다.
+* 이때 꺼낸 데이터는 두 번째 인수가 참조할 수 있도록 한다.
+* 큐에서 구조체 주소를 꺼낸 후에는 Down-Heap(Heapization)을 수행하여야 한다.
+*/
+int dequeue(queue_t *pQueue, person_t **person, compare_t compareFunc) {
+	if (pQueue->count < 1) {
+		printf("큐에 저장된 데이터가 없습니다.\n");
+		return 0;
+	}
+
+	int pos = 1;
+	*person = pQueue->persons[pos];
+
+	pQueue->persons[pos] = pQueue->persons[pQueue->count--];
+	while ((pos * 2) <= pQueue->count) {
+		int child = pos * 2;
+		if (((child + 1) <= pQueue->count) && (compareFunc(pQueue->persons[child], pQueue->persons[child + 1]) > 0)) {
+			child++;
+		}
+		if (compareFunc(pQueue->persons[pos], pQueue->persons[child]) <= 0) {
+			break;
+		}
+
+		swap(pQueue->persons + pos, pQueue->persons + child);
+		pos = child;
+	}
+
+	return 1;
+}
+
+/*
+* 함수명 : printPerson
+* 파라미터
+* p : 출력할 구조체를 참조하는 포인터
+* 반환값
+* 없음
+* 설명
+* 인수로 전달받은 포인터가 참조하는 구조체 정보를 출력한다.
+*/
+void printPerson(person_t *p) {
+	printf("[%s %d] ", p->name, p->age);
+}
+
+/*
+* 함수명 : print
+* 파라미터
+* pQueue : 우선순위 큐 관리 구조체
+* 반환값
+* 없음
+* 설명
+* 인수로 전달받은 우선순위 큐 관리 구조체에 저장된 모든 구조체 정보를 출력한다.
+*/
+void print(queue_t *pQueue) {
+	printf("현재 등록된 인원 수 : %d\n", pQueue->count);
+	for (int i = 1; i <= pQueue->count; i++) {
+		printPerson(*(pQueue->persons + i));
+	}
+	printf("\n");
+}
+
+/*
+* 함수명 : init
+* 파라미터
+* q : 우선순위 큐 관리 구조체 참조 포인터
+* size : 우선순위 큐 공간의 크기
+* 반환값
+* 성공시 : 우선순위 큐 관리 구조체 참조 주소
+* 실패시 : NULL
+* 설명
+* 첫 번째 인수로 전달받은 우선순위 큐 관리 구조체를 초기화 한다.
+* 두 번째 인수는 우선선위 큐 관리 구조체에 저장할 수 있는 데이터의 수이며 size - 1 개 만큼
+* 데이터 저장에 사용된다. (0번 인덱스는 사용하지 않음)
+*/
+queue_t* init(queue_t *q, int size) {
+	q->persons = (person_t**)malloc(sizeof(person_t*) * (size + 1));	
+	if (q->persons == NULL) {
+		printf("queue 초기화에 실패하였습니다.\n");
+		return NULL;
+	}
+	memset(q->persons, 0, sizeof(person_t*) * (size + 1));
+	q->count = 0;
+	q->size = size + 1;
+	return q;
+}
+
+void destroyPerson(person_t *p) {
+	printf("%s님의 구조체 메모리 할당을 해제합니다.\n", p->name);
+	free(p->name);
+	free(p);	
+}
+
+void destroy(queue_t *q, compare_t compareFunc) {
+	while (q->count > 0) {
+		person_t *tmp = NULL;
+		if (dequeue(q, &tmp, compareFunc) != 0) {
+			printPerson(tmp);
+			destroyPerson(tmp);
+		}
+	}
+	free(q->persons);
+	q->persons = NULL;
+	q->count = 0;
+	q->size = 0;
+	printf("동적할당을 해제하였습니다.\n");
+}
+
+int main() {
+
+	compare_t compareFunc = ageCompare;
+
+	queue_t q = { NULL, 0, 0 };
+	
+	person_t persons[] = { 
+		{ "홍길동", 20 }, { "심청이", 16 }, { "이순신", 55 }, { "에디슨", 45 },
+		{ "제이슨", 35 }, { "김기희", 30 }, { "강감찬", 35 }, { "아인슈타인", 55 }, 
+		{ "을지문덕", 40 }, { "고길동", 23 }, { "제임스", 28 }, { "김재희", 20 } };
+	int count = (int)(sizeof(persons) / sizeof(persons[0]));
+	if (init(&q, count) == NULL) {
+		exit(1);
+	}
+
+	for (int i = 0; i < count; i++) {
+		person_t *person = makePerson(persons[i].name, persons[i].age);
+		if (person == NULL) {
+			printf("person 구조체 생성에 실패하였습니다.\n");
+			exit(1);
+		}
+		enqueue(&q, person, compareFunc);
+	}
+	print(&q);
+
+	for (int i = 0; i < 10; i++) {
+		person_t *tmp = NULL;
+		if (dequeue(&q, &tmp, compareFunc) != 0) {
+			printf("출력 : ");
+			printPerson(tmp);
+			destroyPerson(tmp);			
+		}
+	}
+	
+	destroy(&q, compareFunc);
+
+	return 0;
+}
